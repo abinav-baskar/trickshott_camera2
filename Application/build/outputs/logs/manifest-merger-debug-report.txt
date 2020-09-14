@@ -1,0 +1,107 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:17:1-43:12
+INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:17:1-43:12
+INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:17:1-43:12
+MERGED from [com.android.support:support-v13:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-v13-27.0.2.aar/07b20f8fe259baedbfae3ab6fd4e122f/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-v4:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-v4-27.0.2.aar/a358fbe15f7fdad5d53af097ed452469/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:cardview-v7:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/cardview-v7-27.0.2.aar/f9a8bf338df14938090193b83dad044a/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:appcompat-v7:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/448c4b1bb97ebf246096a69f6d675077/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-media-compat:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/61c16c0b25bb7e2b9ad87825a74170f5/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-fragment:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-fragment-27.0.2.aar/3820deace6ef79253c7f0e90dafbe1f4/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-utils:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-core-utils-27.0.2.aar/0d0d409d9455b76857c43de52b427314/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:animated-vector-drawable:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-27.0.2.aar/c11e4d6f87bd6bac6a01e2d0ad421a39/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-ui:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-core-ui-27.0.2.aar/0bcdcc3d5919c38155ba7947022f95cd/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-vector-drawable:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-27.0.2.aar/dee470b7612ae2a10507a843c0d19d41/AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-compat:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-compat-27.0.2.aar/32167f80b59cb37f506f9f0a3cff9ee2/AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:runtime:1.0.3] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/runtime-1.0.3.aar/2ce9d769ee845db438327c7ac68e5dca/AndroidManifest.xml:17:1-24:12
+INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:17:1-43:12
+INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:17:1-43:12
+	package
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:18:5-47
+	android:versionName
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:20:5-30
+		INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+		INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:17:11-69
+	android:versionCode
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:19:5-28
+		INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+		INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+uses-permission#android.permission.CAMERA
+ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:24:5-64
+	android:name
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:24:22-62
+uses-permission#android.permission.RECORD_AUDIO
+ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:25:5-70
+	android:name
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:25:22-68
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:26:5-80
+	android:name
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:26:22-78
+application
+ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:28:5-41:19
+	android:label
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:29:9-41
+	android:icon
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:30:9-45
+	android:allowBackup
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:28:18-44
+	android:theme
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:31:9-45
+activity#com.example.android.camera2video.CameraActivity
+ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:33:9-39:20
+	android:label
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:34:19-51
+	android:name
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:33:19-49
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:35:13-38:29
+action#android.intent.action.MAIN
+ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:36:17-69
+	android:name
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:36:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:37:17-77
+	android:name
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml:37:27-74
+uses-sdk
+INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+MERGED from [com.android.support:support-v13:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-v13-27.0.2.aar/07b20f8fe259baedbfae3ab6fd4e122f/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-v13:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-v13-27.0.2.aar/07b20f8fe259baedbfae3ab6fd4e122f/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-v4:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-v4-27.0.2.aar/a358fbe15f7fdad5d53af097ed452469/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-v4:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-v4-27.0.2.aar/a358fbe15f7fdad5d53af097ed452469/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:cardview-v7:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/cardview-v7-27.0.2.aar/f9a8bf338df14938090193b83dad044a/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:cardview-v7:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/cardview-v7-27.0.2.aar/f9a8bf338df14938090193b83dad044a/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:appcompat-v7:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/448c4b1bb97ebf246096a69f6d675077/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:appcompat-v7:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.0.2.aar/448c4b1bb97ebf246096a69f6d675077/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-media-compat:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/61c16c0b25bb7e2b9ad87825a74170f5/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-media-compat:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-media-compat-27.0.2.aar/61c16c0b25bb7e2b9ad87825a74170f5/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-fragment-27.0.2.aar/3820deace6ef79253c7f0e90dafbe1f4/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-fragment-27.0.2.aar/3820deace6ef79253c7f0e90dafbe1f4/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-core-utils-27.0.2.aar/0d0d409d9455b76857c43de52b427314/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-core-utils-27.0.2.aar/0d0d409d9455b76857c43de52b427314/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-27.0.2.aar/c11e4d6f87bd6bac6a01e2d0ad421a39/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:animated-vector-drawable:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/animated-vector-drawable-27.0.2.aar/c11e4d6f87bd6bac6a01e2d0ad421a39/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-core-ui-27.0.2.aar/0bcdcc3d5919c38155ba7947022f95cd/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-core-ui-27.0.2.aar/0bcdcc3d5919c38155ba7947022f95cd/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-27.0.2.aar/dee470b7612ae2a10507a843c0d19d41/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-vector-drawable-27.0.2.aar/dee470b7612ae2a10507a843c0d19d41/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-compat-27.0.2.aar/32167f80b59cb37f506f9f0a3cff9ee2/AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:27.0.2] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/support-compat-27.0.2.aar/32167f80b59cb37f506f9f0a3cff9ee2/AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.0.3] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/runtime-1.0.3.aar/2ce9d769ee845db438327c7ac68e5dca/AndroidManifest.xml:20:5-22:41
+MERGED from [android.arch.lifecycle:runtime:1.0.3] /Users/abinavbaskar/.gradle/caches/transforms-1/files-1.1/runtime-1.0.3.aar/2ce9d769ee845db438327c7ac68e5dca/AndroidManifest.xml:20:5-22:41
+INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+		INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+		ADDED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml
+		INJECTED from /Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/src/main/AndroidManifest.xml

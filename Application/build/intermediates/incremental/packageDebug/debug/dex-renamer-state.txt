@@ -1,0 +1,4 @@
+#Sat Sep 12 11:12:50 BST 2020
+base.0=/Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/build/intermediates/transforms/dexMerger/debug/0
+path.0=classes.dex
+renamed.0=classes.dex
