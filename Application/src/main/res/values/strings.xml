@@ -5,4 +5,12 @@
     <string name="description_info">Info</string>
     <string name="permission_request">This sample needs permission for camera and audio recording.</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+
+    <string name="activity_about_trickshott">Trickshott logo animation</string>
+    <string name="mva_menu_desc">Menu Button - press for settings</string>
+    <string name="mva_flip_desc">Flip button</string>
+    <string name="mva_capture_desc">Capture/stop button</string>
+    <string name="mva_save_desc">Save button - press to save a segment</string>
+    <string name="mva_thumbnail_desc">Save button - press to save a segment</string>
+    <string name="mva_ring">Ring for aesthetics ;)</string>
 </resources>

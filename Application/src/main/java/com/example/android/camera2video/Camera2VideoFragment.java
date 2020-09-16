@@ -1,5 +1,6 @@
 package com.example.android.camera2video;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -8,19 +9,27 @@ import android.hardware.camera2.CameraDevice;
 
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v13.app.FragmentCompat;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 
 public class Camera2VideoFragment extends Fragment
@@ -29,9 +38,15 @@ public class Camera2VideoFragment extends Fragment
     private MediaRecorderHandler mediaRecorderHandler = new MediaRecorderHandler();
     private PermissionHandler permissionHandler;
     private ThreadHandler threadHandler;
+    private ButtonHandler buttonHandler;
 
-    Button mButtonVideo;
     private String mNextVideoAbsolutePath;
+    private Handler mainHandler = new Handler();
+    FileOutputStream fileOutputStream;
+
+    Boolean saveSegmentOnStop = true;
+
+    private boolean disableMediaButtons = false;
 
     public static Camera2VideoFragment newInstance() {
         return new Camera2VideoFragment();
@@ -40,16 +55,14 @@ public class Camera2VideoFragment extends Fragment
     @Override //Is this the actual onCreate method?
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_camera2_video, container, false);
+        return inflater.inflate(R.layout.new_fragment_camera2, container, false);
     }
 
     @Override
+    @SuppressLint("ClickableViewAccessibility")
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         mediaRecorderHandler.mTextureView = view.findViewById(R.id.texture);
-        mButtonVideo = view.findViewById(R.id.video);
-        mButtonVideo.setOnClickListener(this);
-        view.findViewById(R.id.info).setOnClickListener(this);
-        view.findViewById(R.id.flip).setOnClickListener(this);
+        buttonHandler = new ButtonHandler(view,getActivity(),uiElementHandler);
     }
 
     @Override
@@ -78,14 +91,6 @@ public class Camera2VideoFragment extends Fragment
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.video: {
-                if (mediaRecorderHandler.mIsRecordingVideo) {
-                    stopRecordingVideo();
-                } else {
-                    startRecordingVideo();
-                }
-                break;
-            }
             case R.id.info: {
                 Activity activity = getActivity();
                 Toast.makeText(activity, "Info Pressed", Toast.LENGTH_SHORT).show();
@@ -128,7 +133,7 @@ public class Camera2VideoFragment extends Fragment
     /**
      * Update the camera preview. StartPreview needs to be called in advance.
      */
-    private void updatePreview() { //TODO maybe another message here to start a thread, but maybe that isn't needed
+    private void updatePreview() {
         if (null ==  mediaRecorderHandler.mCameraDevice) {
             return;
         }
@@ -148,19 +153,20 @@ public class Camera2VideoFragment extends Fragment
 
     private void startRecordingVideo() {
         if (null ==  mediaRecorderHandler.mCameraDevice || ! mediaRecorderHandler.mTextureView.isAvailable() || null ==  mediaRecorderHandler.mPreviewSize) {
+            Toast.makeText(getActivity(), "BAD", Toast.LENGTH_SHORT).show();
             return;
         }
-        try {
-            mNextVideoAbsolutePath= mediaRecorderHandler.setUpMediaRecorder(getActivity(),mNextVideoAbsolutePath);
-            mediaRecorderHandler.startRecordingVideo(getActivity(),threadHandler.mBackgroundHandler,uiElementHandler);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //mNextVideoAbsolutePath= mediaRecorderHandler.setUpMediaRecorder(getActivity(),mNextVideoAbsolutePath);
+
+        //mediaRecorderHandler.mMediaRecorder.setMaxDuration(5000);
+        //String str = "hi";
+        // mediaRecorderHandler.mMediaRecorder.setNextOutputFile(new File(mediaRecorderHandler.getVideoFilePath(getActivity(),str))); //this is a bad way of doing it but
+        mediaRecorderHandler.startRecordingVideo(getActivity(),threadHandler.mBackgroundHandler,uiElementHandler,mNextVideoAbsolutePath);
+
     }
 
     private void stopRecordingVideo() {
-        mButtonVideo.setText(R.string.record);// UI
-        mNextVideoAbsolutePath = mediaRecorderHandler.stopRecordingVideo(getActivity(),mNextVideoAbsolutePath);
+        mediaRecorderHandler.stopRecordingVideo(getActivity(),mNextVideoAbsolutePath,uiElementHandler);
         mediaRecorderHandler.startPreview(getActivity(),threadHandler.mBackgroundHandler,uiElementHandler);
     }
 
@@ -170,11 +176,40 @@ public class Camera2VideoFragment extends Fragment
         public void handleMessage(Message msg) {
             Bundle bundle = msg.getData();
             if(bundle.getBoolean("mButtonVideo.reverseText")) {
-                mButtonVideo.setText(R.string.stop); //TODO: Later we can keep an int key for open or close
+                disableMediaButtons = false;
             }
 
-            if(bundle.getBoolean("updatePreview")) {
-                updatePreview();
+            if(bundle.getBoolean("updatePreview")) { updatePreview();}
+
+            if(bundle.getBoolean("stopVideo")) {
+                Toast.makeText(getContext(), "VideoSaved", Toast.LENGTH_SHORT).show();
+            }
+            if(bundle.getBoolean("captureButtonPressed")) {
+                if (!mediaRecorderHandler.mIsRecordingVideo && !disableMediaButtons) {
+                    buttonHandler.startRecordingAnimation();
+                    startRecordingVideo();
+                    //ssLastClickTime = System.nanoTime();
+
+                    //hasSavedAClipWhenSaveSegmentIsFalse = false;
+                    //saveSegmentRunnable.makeFinalFileNull();
+                    disableMediaButtons = true;
+                } else {
+                    if (!disableMediaButtons/*true*/) { //Preventing double clicks
+                        buttonHandler.endRecordingAnimation(saveSegmentOnStop);
+
+                        //ssLastClickTime = System.nanoTime();
+                        stopRecordingVideo();
+                    }
+                }
+            }
+            if(bundle.getBoolean("flipButtonPressed")) {
+                mediaRecorderHandler.switchCamera(getActivity());
+            }
+            if(bundle.getBoolean("saveButtonPressed")) {
+
+            }
+            if(bundle.getBoolean("thumbnailViewPressed")) {
+
             }
         }
     };

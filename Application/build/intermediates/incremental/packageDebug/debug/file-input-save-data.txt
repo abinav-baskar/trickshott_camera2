@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Wed Sep 09 16:45:10 BST 2020
+#Wed Sep 16 12:45:57 BST 2020
 0.baseType=DIRECTORY
 0.base=/Users/abinavbaskar/Desktop/android-Camera2Video-master/Application/build/intermediates/transforms/dexMerger/debug/0
 0.path=classes.dex
