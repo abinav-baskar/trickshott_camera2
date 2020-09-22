@@ -39,14 +39,23 @@ public class Camera2VideoFragment extends Fragment
     private PermissionHandler permissionHandler;
     private ThreadHandler threadHandler;
     private ButtonHandler buttonHandler;
+    private FileProcessor fileProcessor;
 
-    private String mNextVideoAbsolutePath;
     private Handler mainHandler = new Handler();
+    Handler saveSegmentRunnableHandler = new Handler();
+
+    long startTime,endTime;
+    int elapsedTimeMillis;
+
+    Runnable firstTimeRunnable;
+
     FileOutputStream fileOutputStream;
 
-    Boolean saveSegmentOnStop = true;
+    Boolean clipSavedThisRecording = false;
+    private boolean firstOfRecordings = true;
 
     private boolean disableMediaButtons = false;
+    private boolean videoCapturing = false; //may need to rename
 
     public static Camera2VideoFragment newInstance() {
         return new Camera2VideoFragment();
@@ -73,6 +82,7 @@ public class Camera2VideoFragment extends Fragment
         threadHandler.startBackgroundThread();
         mediaRecorderHandler.setupMStateCalback(getActivity(),threadHandler,uiElementHandler);
         mediaRecorderHandler.setupMSurfaceTextureListener(getActivity());
+        fileProcessor = new FileProcessor(saveSegmentRunnableHandler);
 
         if ( mediaRecorderHandler.mTextureView.isAvailable()) {
             openCamera( mediaRecorderHandler.mTextureView.getWidth(),  mediaRecorderHandler.mTextureView.getHeight());
@@ -130,6 +140,13 @@ public class Camera2VideoFragment extends Fragment
         mediaRecorderHandler.openCamera(width,height,getActivity());
     }
 
+    public void autoStartVideo() throws InterruptedException, IOException {
+
+        mediaRecorderHandler.setUpMediaRecorder(getActivity(), fileProcessor,2,uiElementHandler);
+        mediaRecorderHandler.startRecordingVideo(getActivity(),threadHandler.mBackgroundHandler,uiElementHandler, fileProcessor);
+    }
+
+
     /**
      * Update the camera preview. StartPreview needs to be called in advance.
      */
@@ -161,13 +178,40 @@ public class Camera2VideoFragment extends Fragment
         //mediaRecorderHandler.mMediaRecorder.setMaxDuration(5000);
         //String str = "hi";
         // mediaRecorderHandler.mMediaRecorder.setNextOutputFile(new File(mediaRecorderHandler.getVideoFilePath(getActivity(),str))); //this is a bad way of doing it but
-        mediaRecorderHandler.startRecordingVideo(getActivity(),threadHandler.mBackgroundHandler,uiElementHandler,mNextVideoAbsolutePath);
+        videoCapturing = true;
+        startTime = System.nanoTime();
+        fileProcessor.onStartRecordingVideo();
+        firstOfRecordings = true;
+        mediaRecorderHandler.startRecordingVideo(getActivity(),threadHandler.mBackgroundHandler,uiElementHandler, fileProcessor);
 
     }
 
     private void stopRecordingVideo() {
-        mediaRecorderHandler.stopRecordingVideo(getActivity(),mNextVideoAbsolutePath,uiElementHandler);
+        videoCapturing = false;
+        removeHandlerCallbacks();
+        elapsedTimeMillis = (int) ((System.nanoTime() - startTime) / 1000000);
+        mediaRecorderHandler.stopRecordingVideo(getActivity(),uiElementHandler,true);
+      //  fileProcessor.startRunnables(getActivity(), elapsedTimeMillis, true,firstOfRecordings); //TODO: Do it once we're done
+
         mediaRecorderHandler.startPreview(getActivity(),threadHandler.mBackgroundHandler,uiElementHandler);
+
+    }
+
+    private void saveSegment() {
+        clipSavedThisRecording = true;
+        elapsedTimeMillis = (int) ((System.nanoTime() - startTime) / 1000000);
+        removeHandlerCallbacks();
+        mediaRecorderHandler.stopRecordingVideo(getActivity(),uiElementHandler,false);
+       // fileProcessor.startRunnables(getActivity(), elapsedTimeMillis, false,firstOfRecordings);
+    }
+
+    private void removeHandlerCallbacks() {
+        if(firstOfRecordings) {
+            mainHandler.removeCallbacks(firstTimeRunnable);
+        }
+        else {
+            mainHandler.removeCallbacks(mainRunnable);
+        }
     }
 
     Handler uiElementHandler = new Handler(Looper.getMainLooper()) {
@@ -175,27 +219,42 @@ public class Camera2VideoFragment extends Fragment
         @Override
         public void handleMessage(Message msg) {
             Bundle bundle = msg.getData();
-            if(bundle.getBoolean("mButtonVideo.reverseText")) {
+            if(bundle.getBoolean("videoStarted")) {
                 disableMediaButtons = false;
+                buttonHandler.saveButton.setEnabled(true);
+                buttonHandler.progressBar.setVisibility(View.GONE);
+                /*mainHandler.postDelayed(firstTimeRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        startTime = System.nanoTime();
+                        mediaRecorderHandler.autoStopVideo();
+                        firstOfRecordings = false;
+                        try {
+                            autoStartVideo();
+                        } catch (InterruptedException | IOException e) {
+                            e.printStackTrace();
+                        }
+                        mainHandler.postDelayed(mainRunnable, fileProcessor.calcRecordTime(PermissionStatus.savedLength) );
+                    }
+                }, fileProcessor.calcRecordTime(PermissionStatus.savedLength) );*/
             }
 
             if(bundle.getBoolean("updatePreview")) { updatePreview();}
 
             if(bundle.getBoolean("stopVideo")) {
                 Toast.makeText(getContext(), "VideoSaved", Toast.LENGTH_SHORT).show();
+                startTime = System.nanoTime(); //strictly only needed when we save but is called on stop too
+
             }
             if(bundle.getBoolean("captureButtonPressed")) {
                 if (!mediaRecorderHandler.mIsRecordingVideo && !disableMediaButtons) {
                     buttonHandler.startRecordingAnimation();
                     startRecordingVideo();
-                    //ssLastClickTime = System.nanoTime();
 
-                    //hasSavedAClipWhenSaveSegmentIsFalse = false;
-                    //saveSegmentRunnable.makeFinalFileNull();
                     disableMediaButtons = true;
                 } else {
                     if (!disableMediaButtons/*true*/) { //Preventing double clicks
-                        buttonHandler.endRecordingAnimation(saveSegmentOnStop);
+                        buttonHandler.endRecordingAnimation(PermissionStatus.saveSegmentOnStop);
 
                         //ssLastClickTime = System.nanoTime();
                         stopRecordingVideo();
@@ -206,11 +265,34 @@ public class Camera2VideoFragment extends Fragment
                 mediaRecorderHandler.switchCamera(getActivity());
             }
             if(bundle.getBoolean("saveButtonPressed")) {
-
+                if(!disableMediaButtons) {
+                    buttonHandler.progressBar.setVisibility(View.VISIBLE);
+                    saveSegment();
+                }
             }
             if(bundle.getBoolean("thumbnailViewPressed")) {
 
             }
+            if(bundle.getBoolean("maxDurationReached")) {
+
+            }
         }
     };
+
+    Runnable mainRunnable = new Runnable() {
+        public void run() {
+            startTime = System.nanoTime();
+            mediaRecorderHandler.autoStopVideo();
+            try {
+                autoStartVideo();
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
+            }
+            mainHandler.postDelayed(mainRunnable, fileProcessor.calcRecordTime(PermissionStatus.savedLength));
+        }
+    };
+
+    public static void setFinalFile(File f) {
+
+    }
 }

@@ -38,15 +38,20 @@ public class MediaRecorderHandler {
     private static final int SENSOR_ORIENTATION_INVERSE_DEGREES = 270;
     private static final SparseIntArray DEFAULT_ORIENTATIONS = new SparseIntArray();
     private static final SparseIntArray INVERSE_ORIENTATIONS = new SparseIntArray();
-    private PermissionHandler permissionHandler = new PermissionHandler();
     private PreviewSizeHandler previewSizeHandler = new PreviewSizeHandler();
     TextureView.SurfaceTextureListener mSurfaceTextureListener;
+    private int fileBeingWrittenTo = 0;
+    private long maxFileSize;
     /**
      * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a
      * {@link TextureView}.
      */
     CameraDevice.StateCallback mStateCallback;
 
+
+    public MediaRecorderHandler() {
+        maxFileSize = PermissionStatus.getAvailableExternalMemorySize();
+    }
 
     private static final String[] VIDEO_PERMISSIONS = {
             Manifest.permission.CAMERA,
@@ -133,24 +138,30 @@ public class MediaRecorderHandler {
         };
     }
 
-    String setUpMediaRecorder(final Activity activity, String mNextVideoAbsolutePath) throws IOException {
+    long getFileSizeFromDuration(int encodingBitRate, long durationMillis) {
+        return durationMillis*durationMillis/1000;
+    }
 
-
+    void setUpMediaRecorder(final Activity activity, final FileProcessor fileProcessor, int fileType,final Handler uiElementHandler) throws IOException {
+                fileBeingWrittenTo = 0;
                 if (null == activity) {
-                    return null;
+                    return;
                 }
                 mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
-                mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
-                    mNextVideoAbsolutePath = this.getVideoFilePath(activity,""); //Bub added 'this'
-                }
-                mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
-                mMediaRecorder.setVideoEncodingBitRate(10000000);
+                mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); //or defualt?
+
+                mMediaRecorder.setOutputFile(fileProcessor.getNextFile(activity, fileBeingWrittenTo).getAbsolutePath());
+                fileBeingWrittenTo = 1;
+
+                int encodingBitRate = 10000000;
+                mMediaRecorder.setVideoEncodingBitRate(encodingBitRate);
                 mMediaRecorder.setVideoFrameRate(30);
                 mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
                 mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
                 mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+              //  mMediaRecorder.setMaxFileSize(getFileSizeFromDuration(encodingBitRate,5000));
+                mMediaRecorder.setMaxFileSize(maxFileSize);
                 int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
                 switch (mSensorOrientation) {
                     case SENSOR_ORIENTATION_DEFAULT_DEGREES:
@@ -160,14 +171,31 @@ public class MediaRecorderHandler {
                         mMediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
                         break;
                 }
-                mMediaRecorder.prepare();
-                return mNextVideoAbsolutePath;
-    }
 
-    String getVideoFilePath(Context context,String addedText) { //TODO: THis added text messes up a lot, maybe only when we pass blank dtring
-        final File dir = context.getExternalFilesDir(null);
-        return (dir == null ? "" : (dir.getAbsolutePath() + "/"))
-                + System.currentTimeMillis() +".mp4";
+                mMediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
+                    @Override
+                    public void onInfo(MediaRecorder mediaRecorder, int i, int i1) { //maxDuration auto-stops mr as well, no guarantee it's stopped yet though
+                        if(i == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_APPROACHING) { //later we'll listen for max_duration_approaching and then set next output file
+                            System.out.println("DBG: Max filesize approaching");
+
+                            try {
+                                mMediaRecorder.setNextOutputFile(fileProcessor.getNextFile(activity,fileBeingWrittenTo));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        else if(i == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED) {
+                            System.out.println("DBG: Max duration reached");
+                            fileBeingWrittenTo++; //ok record number is not quite the right name but
+                            fileProcessor.onNextFileUsed(fileBeingWrittenTo);
+
+                        } else if(i == MediaRecorder.MEDIA_RECORDER_INFO_NEXT_OUTPUT_FILE_STARTED) {
+                            System.out.println("DBG: Next output file started");
+                        }
+                    }
+                });
+                mMediaRecorder.prepare();
+
     }
 
     MediaRecorder mMediaRecorder; //
@@ -213,7 +241,7 @@ public class MediaRecorderHandler {
     }
 
 
-    void startRecordingVideo(final Activity activity, final Handler mBackgroundHandler, final Handler uiElementHandler, final String mNextVideoAbsolutePath) {
+    void startRecordingVideo(final Activity activity, final Handler mBackgroundHandler, final Handler uiElementHandler, final FileProcessor fileProcessor) {
         class startRecordingVideoRunnable implements Runnable {
             public void run() {
                 if (null == mCameraDevice || !mTextureView.isAvailable() || null == mPreviewSize) {
@@ -222,7 +250,8 @@ public class MediaRecorderHandler {
                     return;
                 }
                 try {
-                    setUpMediaRecorder(activity,mNextVideoAbsolutePath);
+                    System.out.println("DBG: StartRecordingVideo requested");
+                    setUpMediaRecorder(activity,fileProcessor,1,uiElementHandler);
                     closePreviewSession();
                     //  setUpMediaRecorder();
 
@@ -231,7 +260,7 @@ public class MediaRecorderHandler {
                     texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
                     mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
                     surfaces = new ArrayList<>();
-                    System.out.println("DBG: Started");
+
 
                     // Set up Surface for the camera preview
                     Surface previewSurface = new Surface(texture);
@@ -251,7 +280,7 @@ public class MediaRecorderHandler {
                             mPreviewSession = cameraCaptureSession;
 
                             sendBooleanMessage(uiElementHandler,"updatePreview",true);
-                            System.out.println("DBG: Donesommit");
+                            System.out.println("DBG: Video recording has started successfully");
 
                             activity.runOnUiThread(new Runnable() {
                                 @Override
@@ -259,7 +288,7 @@ public class MediaRecorderHandler {
                                     // UI - set next text of button
                                     Message message = Message.obtain();
                                     Bundle b = new Bundle(); //Data has to be in the form of a bundle, so only primitive types it deems
-                                    b.putBoolean("mButtonVideo.reverseText", true);
+                                    b.putBoolean("videoStarted", true);
                                     message.setData(b);
                                     uiElementHandler.sendMessage(message);
 
@@ -290,20 +319,41 @@ public class MediaRecorderHandler {
         t.start();
     }
 
-    void stopRecordingVideo(final Activity activity, final String mNextVideoAbsolutePath, final Handler uiElementHandler) {
+    void stopRecordingVideo(final Activity activity, final Handler uiElementHandler, boolean stopVideo, FileProcessor fileProcessor) {
         class stopRecordingVideoRunnable implements Runnable {
             public void run() {
                 //  mButtonVideo.setText(R.string.record);
                 mMediaRecorder.stop();
                 mMediaRecorder.reset();
 
-                sendBooleanMessage(uiElementHandler,"stopVideo",true);
-                mIsRecordingVideo = false;
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        sendBooleanMessage(uiElementHandler, "stopVideo", true);
+                    }
+                });
+
+                    fileProcessor.startRunnables(getActivity(), elapsedTimeMillis, false);
+                    fileProcessor.onStartRecordingVideo();
+
+                    mediaRecorderHandler.startRecordingVideo(getActivity(),threadHandler.mBackgroundHandler,uiElementHandler, fileProcessor);
+                } else { //TODO: commented out temporarily
+                    fileProcessor.startRunnables(getActivity(), elapsedTimeMillis, true);
+                    // fileProcessor.simpleSave(getActivity());
+                } //is there a pause?
+                mIsRecordingVideo =false;
             }
         }
         Thread t = new Thread(new stopRecordingVideoRunnable());
         t.start();
     }
+
+    void autoStopVideo() {
+        mMediaRecorder.reset();
+        mMediaRecorder.release();
+    }
+
+
 
 
     @SuppressWarnings("MissingPermission")
@@ -427,7 +477,8 @@ public class MediaRecorderHandler {
 
 
 
-    private void sendBooleanMessage(Handler handler, String key, Boolean booleam) {
+
+     void sendBooleanMessage(Handler handler, String key, Boolean booleam) {
         Message message = Message.obtain();
         Bundle b = new Bundle(); //Data has to be in the form of a bundle, so only primitive types it deems
         b.putBoolean(key, true);
@@ -436,22 +487,3 @@ public class MediaRecorderHandler {
     }
 
 }
-
-
-/*
-Message message = Message.obtain();
-            Bundle b = new Bundle(); //Data has to be in the form of a bundle, so only primitive types it deems
-            b.putBoolean("",uri.toString());
-            message.setData(b);
-            handler.sendMessage(message);
- */
-
-/*
-   Handler ssrHandler = new Handler(Looper.getMainLooper()) {
-
-        @Override
-        public void handleMessage(Message msg) {
-            Bundle bundle = msg.getData();
-        }
-    };
- */

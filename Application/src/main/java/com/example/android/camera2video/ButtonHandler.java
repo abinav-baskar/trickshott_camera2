@@ -19,7 +19,7 @@ public class ButtonHandler {
 
      private GradientDrawable orangeRoundedCorner, whiteRoundedCorner,straightCorner, roundedNoColour;
      ImageButton menuButton;
-     private ImageButton flipButton,saveButton;
+     ImageButton flipButton,saveButton;
      private Button captureButton;
      ProgressBar progressBar;
      ImageView saveButtonRing,flipButtonRing, thumbnailRing, captureRing;
@@ -82,8 +82,6 @@ public class ButtonHandler {
                         return true;
                     case MotionEvent.ACTION_UP:
                         imageButtonAnimatePressUp(saveButton);
-                        progressBar.setVisibility(View.VISIBLE);
-                        saveButton.setEnabled(false);
                         sendBooleanMessage(uiElementHandler,"saveButtonPressed",true);
                         return true;
                     case MotionEvent.ACTION_CANCEL:
